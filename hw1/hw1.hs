@@ -65,3 +65,9 @@ hanoi 0 _ _ _ = []
 hanoi n a b c = left ++ [(a, b)] ++ right
   where left  = hanoi (n - 1) a c b
         right = hanoi (n - 1) c b a
+
+--
+-- Exercise 6
+--
+-- TODO: placeholder
+--
