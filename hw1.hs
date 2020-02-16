@@ -52,3 +52,16 @@ validate number = summed `mod` 10 == 0
     where digits = toDigits number
           everyOtherDoubled = doubleEveryOther digits
           summed = sumDigits everyOtherDoubled
+
+--
+-- Exercise 5
+--
+
+type Peg = String
+type Move = (Peg, Peg)
+
+hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
+hanoi 0 _ _ _ = []
+hanoi n a b c = left ++ [(a, b)] ++ right
+  where left  = hanoi (n - 1) a c b
+        right = hanoi (n - 1) c b a
