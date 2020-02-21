@@ -69,5 +69,22 @@ mybuild = myfoldr insert Leaf
 --
 -- Exercise 4
 --
--- TODO
+-- In-order traversal of a MessageTree
 --
+
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder (Node left message right) = (inOrder left) ++ [message] ++ (inOrder right)
+
+--
+-- Exercise 5
+--
+-- Return sorted errors with severity greater than or equal to 50
+--
+
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong messages = map  (\(LogMessage _ _ msg) -> msg) (inOrder (build (filterMessages messages)))
+  where filterMessages = filter isRelevant
+        isRelevant :: LogMessage -> Bool
+        isRelevant (LogMessage (Error severity) _ _) = severity >= 50
+        isRelevant _ = False
