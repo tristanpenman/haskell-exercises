@@ -49,3 +49,25 @@ pickEveryNth2 n lst = [lst !! i | i <- [n-1, n-1+n..length lst - 1]]
 
 skips2 :: [a] -> [[a]]
 skips2 xs = [pickEveryNth2 i xs | i <- [1..length xs] ]
+
+--
+-- Exercise 2 - Local maxima
+--
+-- A local maximum of a list is an element of the list which is strictly
+-- greater than both the elements immediately before and after it. For
+-- example, in the list [2,3,4,1,5], the only local maximum is 4, since it is
+-- greater than the elements immediately before and after it (3 and 1).
+-- 5 is not a local maximum since there is no element that comes after it.
+--
+-- Examples:
+--
+--     localMaxima [2,9,5,6,1] == [9,6]
+--     localMaxima [2,3,4,1,5] == [4]
+--     localMaxima [1,2,3,4,5] == []
+--
+
+localMaxima :: [Integer] -> [Integer]
+localMaxima (x:y:z:xs)
+  | x < y && y > z = y : localMaxima (y:z:xs)
+  | otherwise      = localMaxima (y:z:xs)
+localMaxima _ = []
