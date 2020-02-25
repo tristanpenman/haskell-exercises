@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -Wall #-}
+
+module Hw01 where
 
 --
 -- Exercise 1
