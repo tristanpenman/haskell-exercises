@@ -160,3 +160,11 @@ xor2 = foldr (\x s -> if x then not s else s) False
 xor3 :: [Bool] -> Bool
 xor3 = foldr xor False
 
+--
+-- Part 2
+--
+-- Implement map in terms of foldr:
+--
+
+map' :: (a -> b) -> [a] -> [b]
+map' f = foldr (\x s -> f x : s) []
