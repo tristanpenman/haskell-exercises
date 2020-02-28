@@ -111,8 +111,27 @@ data Tree a = Leaf
 
 --
 -- define a function which generates a balanced binary tree from a list of
--- values using foldr:
+-- values using foldr. The does not need to have a particular order, but
+-- it must be balanced.
 --
 
 foldTree :: [a] -> Tree a
-foldTree = undefined
+foldTree = foldr insert Leaf
+
+height :: Tree a -> Integer
+height Leaf = -1
+height (Node h _ _ _) = h
+
+insert :: a -> Tree a -> Tree a
+insert x Leaf = (Node 0 Leaf x Leaf)
+insert x (Node _ left val right)
+    -- check whether right subtree needs some love
+    | rightHt <= leftHt = let newRight = insert x right
+                              newRightHt = height newRight
+                          in Node (succ $ max leftHt $ newRightHt) left val newRight
+    -- otherwise default to left subtree
+    | otherwise         = let newLeft = insert x left
+                              newLeftHt = height newLeft
+                          in Node (succ $ max newLeftHt $ rightHt) newLeft val right
+  where leftHt = height left
+        rightHt = height right
