@@ -2,6 +2,8 @@
 
 module Hw04 where
 
+import Data.Bits (xor)
+
 --
 -- Exercise 1 - Wholemeal programming
 --
@@ -135,3 +137,26 @@ insert x (Node _ left val right)
                           in Node (succ $ max newLeftHt $ rightHt) newLeft val right
   where leftHt = height left
         rightHt = height right
+
+--
+-- Exercise 3 - more folds
+--
+-- Part 1
+--
+-- Write a function which returns True if and only if there are an odd number
+-- of True values contained in the input list. It does not matter how many
+-- False values the input list contains.
+--
+
+xor1 :: [Bool] -> Bool
+xor1 = foldr fn False
+  where fn x s
+          | x == True = not s
+          | otherwise = s
+
+xor2 :: [Bool] -> Bool
+xor2 = foldr (\x s -> if x then not s else s) False
+
+xor3 :: [Bool] -> Bool
+xor3 = foldr xor False
+
