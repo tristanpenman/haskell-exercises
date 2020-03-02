@@ -20,3 +20,20 @@ eval (Lit v) = v
 
 evalStr :: String -> Maybe Integer
 evalStr = fmap eval . parseExp Lit Add Mul
+
+--
+-- Exercise 3
+--
+
+class Expr a where
+  lit :: Integer -> a
+  add :: a -> a -> a
+  mul :: a -> a -> a
+
+instance Expr ExprT where
+  lit = Lit
+  add = Add
+  mul = Mul
+
+reify :: ExprT -> ExprT
+reify = id
