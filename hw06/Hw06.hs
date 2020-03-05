@@ -91,3 +91,28 @@ streamMap fn (Stream s xs) = Stream (fn s) (streamMap fn xs)
 
 streamFromSeed :: (a -> a) -> a -> Stream a
 streamFromSeed fn s = Stream s (streamFromSeed fn (fn s))
+
+--
+-- Exercise 5
+--
+
+--
+-- Part 1 - natural numbers
+--
+
+nats :: Stream Integer
+nats = streamFromSeed (\x -> x + 1) 0
+
+--
+-- Part 2 - ruler function
+--
+-- Hint: define a function interleaveStreams which alternates the elements
+-- from two streams. Canyou use this function to implement 'ruler' in a
+-- clever way that does not have to do any divisibility testing?
+--
+
+streamInterleave :: Stream a -> Stream a -> Stream a
+streamInterleave (Stream x xs) ys = Stream x (streamInterleave ys xs)
+
+ruler :: Stream Integer
+ruler = streamInterleave (streamRepeat 0) (streamMap (+1) ruler)
