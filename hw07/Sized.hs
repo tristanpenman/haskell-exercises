@@ -2,6 +2,7 @@
 module Sized where
 
 import Data.Monoid
+import Data.Semigroup
 
 newtype Size = Size Int
   deriving (Eq, Ord, Show, Num)
@@ -24,5 +25,8 @@ instance Sized b => Sized (a,b) where
   size = size . snd
 
 instance Monoid Size where
-  mempty  = Size 0
+  mempty  = 0
   mappend = (+)
+
+instance Semigroup Size where
+  (Size m1) <> (Size m2) = Size (m1 + m2)
