@@ -1,8 +1,11 @@
 {-# OPTIONS_GHC -Wall #-}
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
 
 module Hw07 where
 
+import Buffer
 import JoinList
+import Scrabble
 import Sized
 
 tag :: Monoid m => JoinList m a -> m
@@ -78,3 +81,55 @@ takeJ _ _ = Empty
 
 az :: JoinList Size Char
 az = foldr1 (+++) $ Single (Size 1) <$> ['a'..'z']
+
+--
+-- Exercise 3
+--
+-- See Scrabble.hs
+--
+
+scoreLine :: String -> JoinList Score String
+scoreLine s = Single (scoreString s) s
+
+--
+-- Exercise 4
+--
+-- Provide a Buffer instance for the type:
+--
+--    JoinList (Score, Size) String
+--
+-- For reference, this is the Buffer instance for the String type:
+--
+--    instance Buffer String where
+--      toString     = id
+--      fromString   = id
+--      line n b     = safeIndex n (lines b)
+--      replaceLine n l b = unlines . uncurry replaceLine' . splitAt n . lines $ b
+--        where replaceLine' pre [] = pre
+--              replaceLine' pre (_:ls) = pre ++ l:ls
+--      numLines     = length . lines
+--      value        = length . words
+--
+
+instance Buffer (JoinList (Score, Size) String) where
+  -- Simple recursive conversion
+  toString Empty = ""
+  toString (Single _ s) = s ++ "\n"
+  toString (Append _ jl1 jl2) = toString jl1 ++ toString jl2
+
+  -- Single entries represent lines in the data structure,
+  -- so first split into lines, and for each line calculate the score and set size to 1
+  fromString s = foldr (+++) Empty (map (\x -> Single (scoreString x, (Size 1)) x) (lines s))
+
+  -- fetch a particular line... ez
+  line = indexJ
+
+  -- take all the lines before the line being replaced, append the new line, then take all of the
+  -- lines after the line being replaced
+  replaceLine n s b = (takeJ n b) +++ fromString s +++ (dropJ (n + 1) b)
+
+  numLines     = getSize . snd . tag
+  value        = undefined
+
+test ::String -> (JoinList (Score, Size) String)
+test = fromString
