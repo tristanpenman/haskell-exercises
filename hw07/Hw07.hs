@@ -1,9 +1,11 @@
 {-# OPTIONS_GHC -Wall #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
 
 module Hw07 where
 
 import Buffer
+import Editor
 import JoinList
 import Scrabble
 import Sized
@@ -23,6 +25,8 @@ tag (Append m _ _) = m
 --
 
 (+++) :: Monoid m => JoinList m a -> JoinList m a -> JoinList m a
+(+++) a Empty = a
+(+++) Empty b = b
 (+++) a b = Append (tag a <> tag b) a b
 
 --
@@ -121,15 +125,18 @@ instance Buffer (JoinList (Score, Size) String) where
   -- so first split into lines, and for each line calculate the score and set size to 1
   fromString s = foldr (+++) Empty (map (\x -> Single (scoreString x, (Size 1)) x) (lines s))
 
-  -- fetch a particular line... ez
+  -- Fetch a particular line... ez
   line = indexJ
 
-  -- take all the lines before the line being replaced, append the new line, then take all of the
+  -- Take all the lines before the line being replaced, append the new line, then take all of the
   -- lines after the line being replaced
-  replaceLine n s b = (takeJ n b) +++ fromString s +++ (dropJ (n + 1) b)
+  replaceLine n s b
+    | n < numLines b = (takeJ n b) +++ fromString s +++ (dropJ (n + 1) b)
+    | otherwise      = b
 
-  numLines     = getSize . snd . tag
-  value        = undefined
+  -- Extract tags
+  numLines = getSize . snd . tag
+  value    = getScore . fst . tag
 
-test ::String -> (JoinList (Score, Size) String)
-test = fromString
+main :: IO()
+main = runEditor editor $ Single ((Score 0), (Size 0)) ""
